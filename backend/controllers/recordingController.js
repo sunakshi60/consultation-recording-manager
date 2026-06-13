@@ -80,7 +80,7 @@ exports.createRecording = async (req, res) => {
             consultationDate: req.body.consultationDate,
             fileUrl: req.file.path,
             fileType: req.file.mimetype,
-            publicId: req.file.filename, // cloudinary uses filename as public_id in the response
+            publicId: req.file.filename, 
             uploadedBy: req.user._id,
             clientEmail: req.body.clientEmail,
         });
@@ -104,7 +104,6 @@ exports.deleteRecording = async (req, res) => {
             return res.status(404).json({ message: "Recording not found" });
         }
 
-        // Delete from Cloudinary if publicId exists
         if (recording.publicId) {
             await cloudinary.uploader.destroy(recording.publicId, {
                 resource_type: recording.fileType.startsWith('video') ? 'video' : 'raw'

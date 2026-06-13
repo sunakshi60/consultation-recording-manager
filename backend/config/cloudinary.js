@@ -21,7 +21,6 @@ const storage = new CloudinaryStorage({
     params: {
         folder: "consultation-recordings",
         resource_type: "auto",
-        // Temporarily removing allowed_formats to debug
     },
 });
 

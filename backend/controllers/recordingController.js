@@ -1,5 +1,6 @@
 const Recording = require("../models/Recording");
 const User = require("../models/User");
+const { cloudinary } = require("../config/cloudinary");
 
 exports.getAllRecordings = async (req, res) => {
     try {
@@ -58,6 +59,15 @@ exports.getRecordingById = async (req, res) => {
 
 exports.createRecording = async (req, res) => {
     try {
+        console.log("--- Create Recording Debug ---");
+        console.log("req.body:", req.body);
+        console.log("req.file:", req.file ? {
+            originalname: req.file.originalname,
+            mimetype: req.file.mimetype,
+            path: req.file.path,
+            size: req.file.size
+        } : "MISSING");
+
         if (!req.file) {
             return res.status(400).json({ message: "Please upload a file" });
         }
@@ -68,8 +78,9 @@ exports.createRecording = async (req, res) => {
             clientName: req.body.clientName,
             notes: req.body.notes,
             consultationDate: req.body.consultationDate,
-            fileUrl: req.file.filename,
+            fileUrl: req.file.path,
             fileType: req.file.mimetype,
+            publicId: req.file.filename, // cloudinary uses filename as public_id in the response
             uploadedBy: req.user._id,
             clientEmail: req.body.clientEmail,
         });
@@ -77,7 +88,7 @@ exports.createRecording = async (req, res) => {
         const savedRecording = await recording.save();
         res.status(201).json(savedRecording);
     } catch (error) {
-        console.error("Error creating recording:", error);
+        console.error("DEBUG - Error creating recording:", error);
         res.status(500).json({
             message: "Failed to create recording",
             error: error.message,
@@ -91,6 +102,13 @@ exports.deleteRecording = async (req, res) => {
 
         if (!recording) {
             return res.status(404).json({ message: "Recording not found" });
+        }
+
+        // Delete from Cloudinary if publicId exists
+        if (recording.publicId) {
+            await cloudinary.uploader.destroy(recording.publicId, {
+                resource_type: recording.fileType.startsWith('video') ? 'video' : 'raw'
+            });
         }
 
         await Recording.findByIdAndDelete(req.params.id);

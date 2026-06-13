@@ -35,6 +35,9 @@ const recordingSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        publicId: {
+            type: String,
+        },
         uploadedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

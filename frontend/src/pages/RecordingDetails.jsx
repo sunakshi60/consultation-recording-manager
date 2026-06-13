@@ -66,7 +66,7 @@ function RecordingDetails() {
                                 <video
                                     className="w-full rounded-2xl aspect-video bg-black/40"
                                     controls
-                                    src={`http://localhost:5000/uploads/${recording.fileUrl}`}
+                                    src={recording.fileUrl.startsWith('http') ? recording.fileUrl : `http://localhost:5000/uploads/${recording.fileUrl}`}
                                 />
                             ) : (
                                 <div className="p-10 flex flex-col items-center justify-center bg-indigo-500/5 rounded-2xl border border-white/5">
@@ -78,7 +78,7 @@ function RecordingDetails() {
                                     <audio
                                         className="w-full mt-4"
                                         controls
-                                        src={`http://localhost:5000/uploads/${recording.fileUrl}`}
+                                        src={recording.fileUrl.startsWith('http') ? recording.fileUrl : `http://localhost:5000/uploads/${recording.fileUrl}`}
                                     />
                                 </div>
                             )}
@@ -116,7 +116,7 @@ function RecordingDetails() {
 
                         <div className="space-y-3 pt-2">
                             <a
-                                href={`http://localhost:5000/uploads/${recording.fileUrl}`}
+                                href={recording.fileUrl.startsWith('http') ? recording.fileUrl : `http://localhost:5000/uploads/${recording.fileUrl}`}
                                 download
                                 target="_blank"
                                 rel="noreferrer"
